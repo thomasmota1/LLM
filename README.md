@@ -71,7 +71,6 @@ cada um deles separadamente:
 ### 2. Chat com contexto completo (Full Context)
 - Junta todo o texto dos PDFs em um único contexto
 - Envia tudo de uma vez para o modelo
-- Funciona, mas é pesado e limitado por tokens e desempenho
 
 ### 3. Chat RAG
 - Os PDFs são quebrados em pequenos trechos
