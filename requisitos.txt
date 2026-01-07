@@ -1,0 +1,10 @@
+langchain
+langchain-core
+langchain-community
+langchain-ollama
+langchain-chroma
+chromadb
+pypdf
+flashrank
+sentence-transformers
+rich

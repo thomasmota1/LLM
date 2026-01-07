@@ -1,0 +1,88 @@
+LOGS DE INTERAÇÃO COM IA
+Projeto: Chat de IA usando LLMs e RAG
+Disciplina: Inteligência Artificial
+IAs usada: Chat GPT e Google Gemini Pro
+--------------------------------------------------
+
+[Problemas com contexto completo]
+Pergunta:
+Enviar todo o conteúdo do PDF no prompt pode causar problemas?
+
+Resumo da resposta da IA - Gemini:
+Foi explicado que enviar textos muito grandes pode exceder o limite
+de contexto do modelo e prejudicar o desempenho.
+
+Decisão tomada:
+Manter o modo de contexto completo apenas como exigido no trabalho,
+ciente de suas limitações práticas.
+
+--------------------------------------------------
+
+[ Qualidade dos trechos recuperados]
+Pergunta:
+Os primeiros trechos retornados pela busca vetorial são sempre os melhores?
+
+Resumo da resposta da IA - Gemini:
+Foi explicado que a busca vetorial retorna trechos semanticamente próximos,
+mas nem sempre os mais relevantes para responder a pergunta.
+
+Decisão tomada:
+Buscar mais trechos do que o necessário (k=20)
+para permitir um refinamento posterior.
+
+--------------------------------------------------
+
+[Reranking no RAG]
+Pergunta:
+Para que serve o reranking citado no enunciado do trabalho?
+Quais os benefícios dele neste projeto e como ele pode ser implementado?
+
+Resumo da resposta da IA - Gemini:
+O reranking serve para reorganizar os trechos recuperados pelo RAG,
+avaliando quais realmente são mais úteis para responder à pergunta.
+No contexto do trabalho, ele melhora a qualidade do contexto enviado ao modelo,
+reduzindo trechos pouco relevantes e tornando a resposta mais precisa.
+A implementação pode ser feita aplicando um modelo leve de ranking
+sobre os trechos recuperados pela busca vetorial,
+selecionando apenas os melhores antes de enviá-los ao LLM.
+
+Decisão tomada:
+Implementar o reranking como uma etapa adicional ao RAG simples,
+utilizando-o apenas para refinar a seleção dos trechos,
+sem alterar a estrutura básica exigida no enunciado.
+
+--------------------------------------------------
+
+[Etapa – Preparação do banco vetorial]
+Pergunta:
+É melhor criar o banco vetorial e os embeddings antes de iniciar o chat
+ou gerar tudo apenas quando o RAG for acionado?
+Isso impacta no tempo de resposta?
+
+Resumo da resposta da IA - Gemini:
+Foi explicado que a criação de embeddings e do banco vetorial é a parte
+mais custosa do RAG em termos de tempo.
+Se esse processamento for feito a cada pergunta,
+o tempo de resposta aumenta significativamente.
+Ao preparar o banco vetorial uma única vez no início do programa,
+o RAG passa a reutilizar essa estrutura,
+tornando as respostas muito mais rápidas durante a interação.
+
+Decisão tomada:
+Realizar todo o carregamento dos PDFs, a divisão dos textos,
+a geração de embeddings e a criação do banco vetorial
+antes de iniciar o loop de interação com o usuário,
+deixando o RAG responsável apenas pela recuperação e geração da resposta.
+
+---------------------------------------------------
+
+[Revisão geral]
+Pergunta:
+A estrutura final do código atende aos requisitos do trabalho?
+
+Resumo da resposta da IA - Gemini e GPT:
+Foi confirmado que os três modos exigidos estão implementados,
+com separação clara entre lógica de carregamento, recuperação e geração.
+
+Decisão tomada:
+Finalizar o projeto mantendo a estrutura atual e documentar o processo.
