@@ -1,5 +1,5 @@
 import os
-import sys
+
 from rich.console import Console
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -67,8 +67,7 @@ def carregar(pasta_arquivos):
     )
 
     # Retriever faz a busca semântica
-    # k=20: buscamos mais trechos do que o necessario,
-    # pois depois eles serão reranqueados
+    # k=20: buscamos mais trechos do que o necessario, pois depois eles serão reranqueados
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": 20}
     )
@@ -162,15 +161,6 @@ def chat_rag(pergunta, retriever):
 if __name__ == "__main__":
 
     pasta_doc = "documentos"
-
-    # se a pasta não existir, criamos e encerramos
-    if not os.path.exists(pasta_doc):
-        os.makedirs(pasta_doc)
-        console.print(
-            f"[red]Pasta '{pasta_doc}' criada. "
-            "Adicione PDFs e execute novamente.[/red]"
-        )
-        sys.exit()
 
     # preparação inicial 
     documentos, retriever = carregar(pasta_doc)
