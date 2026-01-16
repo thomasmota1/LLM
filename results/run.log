@@ -1,0 +1,123 @@
+2026-01-15 11:45:24,767 INFO LLM e embeddings (Ollama) inicializados.
+2026-01-15 11:45:26,548 INFO Ranker FlashRank inicializado.
+2026-01-15 11:48:49,592 ERROR Erro ao chamar LLM: 'str' object has no attribute 'content'
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 93, in safe_llm_call
+    out = llm.generate([prompt])
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 909, in generate
+    _format_for_tracing(message_list) for message_list in messages
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 131, in _format_for_tracing
+    if isinstance(message.content, list):
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'content'
+2026-01-15 11:48:49,605 INFO Chat simples executado | latência: 0.01s
+2026-01-15 14:34:11,172 INFO Carregado Introdução+a+machine+learning+e+redes+neurais.pdf (275 páginas).
+2026-01-15 14:34:11,204 INFO Fragmentação concluída: 593 fragments gerados.
+2026-01-15 14:34:14,189 ERROR Erro ao inicializar Chroma: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 180, in carregar
+    if __name__ == "__main__":
+                          ^^^^
+    ...<3 lines>...
+        # carrega tudo so uma vez
+        ^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_chroma\vectorstores.py", line 1431, in from_documents
+    return cls.from_texts(
+           ~~~~~~~~~~~~~~^
+        texts=texts,
+        ^^^^^^^^^^^^
+    ...<16 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_chroma\vectorstores.py", line 1365, in from_texts
+    chroma_collection.add_texts(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        texts=batch[3] if batch[3] else [],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadatas=batch[2] if batch[2] else None,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        ids=batch[0],
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_chroma\vectorstores.py", line 627, in add_texts
+    embeddings = self._embedding_function.embed_documents(texts)
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_ollama\embeddings.py", line 301, in embed_documents
+    return self._client.embed(
+           ~~~~~~~~~~~~~~~~~~^
+        self.model, texts, options=self._default_params, keep_alive=self.keep_alive
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )["embeddings"]
+    ^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\ollama\_client.py", line 393, in embed
+    return self._request(
+           ~~~~~~~~~~~~~^
+      EmbedResponse,
+      ^^^^^^^^^^^^^^
+    ...<9 lines>...
+      ).model_dump(exclude_none=True),
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\ollama\_client.py", line 189, in _request
+    return cls(**self._request_raw(*args, **kwargs).json())
+                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\ollama\_client.py", line 135, in _request_raw
+    raise ConnectionError(CONNECTION_ERROR_MESSAGE) from None
+ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-01-15 14:34:14,534 ERROR Erro ao chamar LLM: 'str' object has no attribute 'content'
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 93, in safe_llm_call
+    # modo força bruta: manda tudo dos pdfs
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 909, in generate
+    _format_for_tracing(message_list) for message_list in messages
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 131, in _format_for_tracing
+    if isinstance(message.content, list):
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'content'
+2026-01-15 14:34:14,601 INFO Chat simples executado | latência: 0.11s
+2026-01-15 14:34:14,601 ERROR Retrieval não disponível.
+2026-01-15 14:34:14,659 ERROR Erro ao chamar LLM: 'str' object has no attribute 'content'
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 93, in safe_llm_call
+    # modo força bruta: manda tudo dos pdfs
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 909, in generate
+    _format_for_tracing(message_list) for message_list in messages
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 131, in _format_for_tracing
+    if isinstance(message.content, list):
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'content'
+2026-01-15 14:34:14,662 INFO Chat simples executado | latência: 0.00s
+2026-01-15 14:34:14,663 ERROR Retrieval não disponível.
+2026-01-15 14:34:14,665 ERROR Erro ao chamar LLM: 'str' object has no attribute 'content'
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 93, in safe_llm_call
+    # modo força bruta: manda tudo dos pdfs
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 909, in generate
+    _format_for_tracing(message_list) for message_list in messages
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 131, in _format_for_tracing
+    if isinstance(message.content, list):
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'content'
+2026-01-15 14:34:14,670 INFO Chat simples executado | latência: 0.00s
+2026-01-15 14:34:14,673 ERROR Retrieval não disponível.
+2026-01-15 14:34:14,676 ERROR Erro ao chamar LLM: 'str' object has no attribute 'content'
+Traceback (most recent call last):
+  File "c:\Users\thoma\OneDrive - Universidade Federal de Uberlândia\LLM_FINAL\main.py", line 93, in safe_llm_call
+    # modo força bruta: manda tudo dos pdfs
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 909, in generate
+    _format_for_tracing(message_list) for message_list in messages
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\thoma\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\langchain_core\language_models\chat_models.py", line 131, in _format_for_tracing
+    if isinstance(message.content, list):
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'content'
+2026-01-15 14:34:14,678 INFO Chat simples executado | latência: 0.00s
+2026-01-15 14:34:14,678 ERROR Retrieval não disponível.
+2026-01-15 14:34:14,680 INFO Experimento finalizado com 4 perguntas.

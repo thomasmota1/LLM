@@ -1,4 +1,5 @@
 import os
+import time
 
 from rich.console import Console
 from langchain_ollama import ChatOllama, OllamaEmbeddings
@@ -9,27 +10,26 @@ from langchain_core.prompts import ChatPromptTemplate
 from flashrank import Ranker, RerankRequest
 
 
+
 console = Console()
 
-# config do modelo
+# modelo que vai responder as perguntas
 MODELO_NOME = "llama3.2"
 
-# modelo de linguagem 
 llm = ChatOllama(model=MODELO_NOME)
 
-# Transformar texto em vetores com embeddings 
-# Usamos o mesmo modelo por simplicidade
+# usamos o msm modelo pra embeddings so pra simplificar
 embeddings = OllamaEmbeddings(model=MODELO_NOME)
 
-# Modelo de reranking. Ele não gera texto, só reordena trechos com base na pergunta
+# modelo de reranking (nao gera texto)
 ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
 
 
-# carregando agora para nao travar o menu
-# lê todos os pdfs, quebra o texto em pedaços, cria o banco vetorial retorna documentos completos (para o modo Full Context) e retriever pronto para o RAG
+# carrega os pdfs e monta o banco vetorial
+
 def carregar(pasta_arquivos):
 
-    # lista os arquivos PDF da pasta
+    # pega so os pdfs da pasta
     arquivos_pdf = [
         f for f in os.listdir(pasta_arquivos)
         if f.lower().endswith(".pdf")
@@ -38,84 +38,97 @@ def carregar(pasta_arquivos):
     if not arquivos_pdf:
         return [], None
 
-    console.print(f"[cyan]Carregando {len(arquivos_pdf)} arquivos PDF...[/cyan]")
+    console.print(f"[cyan]Carregando {len(arquivos_pdf)} PDFs...[/cyan]")
 
     documentos = []
 
-    # leitura
+    # leitura pagina por pagina
     for arquivo in arquivos_pdf:
         caminho = os.path.join(pasta_arquivos, arquivo)
         loader = PyPDFLoader(caminho)
 
-        # cada PDF vira uma lista de páginas (document)
+        # cada pagina vira um Document
         documentos.extend(loader.load())
 
-    # PDFs grandes não cabem inteiros no contexto do modelo
-    # então quebramos em pedaços menores
+    # pdf inteiro nao cabe no contexto do modelo
+    # entao quebramos em pedaços menores
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,    # tamanho de cada pedaço
-        chunk_overlap=200   # sobreposição para não perder contexto
+        chunk_size=1000,    # tamanho aproximado
+        chunk_overlap=200   # sobreposicao pra nao perder sentido
     )
 
     documentos_divididos = splitter.split_documents(documentos)
 
-    # banco vetorial
-    # cada pedaço vira um embedding e é armazenado
+    # cria o banco vetorial
+    # cada chunk vira um embedding
     vectorstore = Chroma.from_documents(
         documents=documentos_divididos,
         embedding=embeddings
     )
 
-    # Retriever faz a busca semântica
-    # k=20: buscamos mais trechos do que o necessario, pois depois eles serão reranqueados
+    # retriever faz a busca semantica
+    # k=20 pq depois vamos reranquear
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": 20}
     )
 
-    console.print("[green]Base de dados preparada com sucesso.[/green]")
+    console.print("[green]Base vetorial pronta.[/green]")
     return documentos, retriever
 
 
-# ---- modos ----
+# ------ modos de chat ---------
 
-# nao usa pdf, a pergunta vai direto pro modelo
+# modo mais simples: pergunta vai direto pro modelo
 def chat_simples(pergunta):
+
+    inicio = time.time()
     resposta = llm.invoke(pergunta)
-    console.print(f"\n[bold blue]Resposta:[/bold blue]\n{resposta.content}\n")
+    tempo = time.time() - inicio
+
+    console.print("\n[bold blue]Resposta:[/bold blue]")
+    console.print(resposta.content)
+    console.print(f"[dim]Tempo: {tempo:.2f}s[/dim]\n")
 
 
-# usa todo o conteudo dos pdfs como contexto e envia tudo pro modelo
+# modo força bruta: manda tudo dos pdfs
 def chat_full(pergunta, documentos):
 
-    # junta o conteudo de todas as paginas
+    # junta o texto de todas as paginas
     contexto = "\n\n".join(doc.page_content for doc in documentos)
 
-    # cria o template do prompt
+    # monta prompt com contexto
     prompt = ChatPromptTemplate.from_template(
-        "Contexto:\n{contexto}\n\nPergunta: {pergunta}"
-    )
+    "Use apenas as informações do contexto abaixo para responder.\n"
+    "Se a resposta não estiver no contexto, diga que não encontrou.\n\n"
+    "Contexto:\n{contexto}\n\n"
+    "Pergunta: {pergunta}"
+)
 
-    # preenche o template com os dados reais
+
     prompt_formatado = prompt.format(
         contexto=contexto,
         pergunta=pergunta
     )
 
-    # envia o texto final diretamente para o modelo
+    inicio = time.time()
     resposta = llm.invoke(prompt_formatado)
+    tempo = time.time() - inicio
 
-    console.print(
-        f"\n[bold blue]Resposta (Full Context):[/bold blue]\n{resposta.content}\n"
-    )
+    console.print("\n[bold blue]Resposta (Full Context):[/bold blue]")
+    console.print(resposta.content)
+    console.print(f"[dim]Tempo: {tempo:.2f}s[/dim]")
+    console.print(f"[dim]Tamanho do contexto: {len(contexto)} chars[/dim]\n")
 
 
-# usa RAG + FlashRank para selecionar os melhores trechos
+# modo RAG + reranking
 def chat_rag(pergunta, retriever):
+
+    inicio = time.time()
 
     # busca semantica inicial
     docs_recuperados = retriever.invoke(pergunta)
 
-    # FlashRank espera uma lista de passagens com id e texto
+    # FlashRank espera id + texto
     passages = []
     for i, doc in enumerate(docs_recuperados):
         passages.append({
@@ -123,26 +136,32 @@ def chat_rag(pergunta, retriever):
             "text": doc.page_content
         })
 
-    # monta a requisição de reranking
+    # pedido de reranking
     rerank_request = RerankRequest(
         query=pergunta,
         passages=passages
     )
 
-    # executa o reranking
     resultados = ranker.rerank(rerank_request)
 
-    # seleciona apenas os 5 melhores trechos após o reranking
+    # pegamos so os 5 melhores
     melhores_trechos = []
     for item in resultados[:5]:
         melhores_trechos.append(passages[item["id"]]["text"])
 
-    # contexto final enviado ao modelo
     contexto = "\n\n".join(melhores_trechos)
 
+    # monta prompt com contexto
     prompt = ChatPromptTemplate.from_template(
-        "Contexto recuperado:\n{contexto}\n\nPergunta: {pergunta}"
-    )
+    " Você deve responder APENAS com base no contexto fornecido."
+    "Use apenas as informações do contexto abaixo para responder.\n"
+    "Se a resposta não estiver no contexto, diga explicitamente:"
+    "A informação não está presente nos documentos fornecidos."
+    "Se a resposta não estiver no contexto, diga que não encontrou.\n\n"
+    "Contexto:\n{contexto}\n\n"
+    "Pergunta: {pergunta}"
+)
+
 
     prompt_formatado = prompt.format(
         contexto=contexto,
@@ -150,29 +169,32 @@ def chat_rag(pergunta, retriever):
     )
 
     resposta = llm.invoke(prompt_formatado)
+    tempo = time.time() - inicio
 
-    console.print(
-        f"\n[bold blue]Resposta (RAG + FlashRank):[/bold blue]\n{resposta.content}\n"
-    )
+    console.print("\n[bold blue]Resposta (RAG):[/bold blue]")
+    console.print(resposta.content)
+    console.print(f"[dim]Tempo: {tempo:.2f}s[/dim]")
+    console.print(f"[dim]Chunks usados: {len(melhores_trechos)}[/dim]")
+    console.print(f"[dim]Contexto final: {len(contexto)} chars[/dim]\n")
 
 
-# ---- MAIN ----
+# -------- programa principal ---------
 
 if __name__ == "__main__":
 
     pasta_doc = "documentos"
 
-    # preparação inicial 
+    # carrega tudo so uma vez
     documentos, retriever = carregar(pasta_doc)
 
     while True:
         console.print("\n[bold yellow]--- MENU ---[/bold yellow]")
         console.print("1 - Chat simples")
-        console.print("2 - Chat com contexto completo (PDF inteiro)")
+        console.print("2 - Chat com contexto completo")
         console.print("3 - Chat RAG")
         console.print("4 - Sair")
 
-        opcao = console.input("\nEscolha uma opção: ")
+        opcao = console.input("\nEscolha uma opcao: ")
 
         match opcao:
             case "1":
@@ -194,7 +216,7 @@ if __name__ == "__main__":
                     console.print("[red]Nenhum PDF carregado.[/red]")
 
             case "4":
-                console.print("[green]Encerrando o programa.[/green]")
+                console.print("[green]Encerrando.[/green]")
                 break
 
             case _:

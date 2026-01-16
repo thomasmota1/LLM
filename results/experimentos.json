@@ -1,0 +1,54 @@
+[
+  {
+    "pergunta": "O que é overfitting?",
+    "simples": {
+      "pergunta": "O que é overfitting?",
+      "resposta": "[ERRO] ao chamar LLM: 'str' object has no attribute 'content'",
+      "meta": {
+        "latencia_s": 0.11259865760803223
+      }
+    },
+    "rag": {
+      "error": "retriever not configured"
+    }
+  },
+  {
+    "pergunta": "Explique gradiente descendente em poucas linhas.",
+    "simples": {
+      "pergunta": "Explique gradiente descendente em poucas linhas.",
+      "resposta": "[ERRO] ao chamar LLM: 'str' object has no attribute 'content'",
+      "meta": {
+        "latencia_s": 0.0031108856201171875
+      }
+    },
+    "rag": {
+      "error": "retriever not configured"
+    }
+  },
+  {
+    "pergunta": "Qual é a principal conclusão do documento?",
+    "simples": {
+      "pergunta": "Qual é a principal conclusão do documento?",
+      "resposta": "[ERRO] ao chamar LLM: 'str' object has no attribute 'content'",
+      "meta": {
+        "latencia_s": 0.0044901371002197266
+      }
+    },
+    "rag": {
+      "error": "retriever not configured"
+    }
+  },
+  {
+    "pergunta": "Quem é o autor do documento?",
+    "simples": {
+      "pergunta": "Quem é o autor do documento?",
+      "resposta": "[ERRO] ao chamar LLM: 'str' object has no attribute 'content'",
+      "meta": {
+        "latencia_s": 0.0020575523376464844
+      }
+    },
+    "rag": {
+      "error": "retriever not configured"
+    }
+  }
+]
