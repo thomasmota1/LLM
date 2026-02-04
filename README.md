@@ -53,7 +53,7 @@ baseadas em PDFs usando RAG.
   Funciona como um diário técnico, documentando decisões, dúvidas e ajustes feitos,
   conforme solicitado nas especificações do trabalho .
 
-- `requirements.txt`  
+- `requisitos.txt`  
   Lista das bibliotecas necessárias para executar o projeto.
 
 ---
@@ -85,7 +85,7 @@ Alem disso:
 ---
 
 
-##  Referências
+## Referências
 
 - NETWORK CHUCK. *Build a RAG system with LangChain (from scratch)*. YouTube, 2023.  
   Disponível em: https://www.youtube.com/watch?v=E4l91XKQSgw&t=1096s  

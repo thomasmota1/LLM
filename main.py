@@ -160,7 +160,7 @@ def chat_rag(pergunta, retriever):
     "Se a resposta não estiver no contexto, diga que não encontrou.\n\n"
     "Contexto:\n{contexto}\n\n"
     "Pergunta: {pergunta}"
-)
+    )
 
 
     prompt_formatado = prompt.format(
